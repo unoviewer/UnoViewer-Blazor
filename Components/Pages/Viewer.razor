@@ -1,0 +1,117 @@
+﻿@page "/viewer"
+<PageTitle>UnoViewer Blazor Demo</PageTitle>
+
+@using Newtonsoft.Json
+@using Uno.Files.Viewer
+
+@rendermode InteractiveServer
+
+@inject ViewerService _viewerService
+@inject IJSRuntime JS
+
+
+<img id="imgWait" src="/unoViewer/img/loading-wait.svg" alt="Loading..." />
+
+
+<div id="divUnoViewer">
+    <div id="div_ctlDoc"></div>
+</div>
+
+<!-- viewer css-->
+<link href="/unoViewer/css/viewer.css" rel="stylesheet" />
+
+<!-- menu css-->
+<link href="/unoViewer/css/desktop-menu.css" rel="stylesheet" />
+<link href="/unoViewer/css/mobile-menu.css" rel="stylesheet" />
+
+<!-- show hide menu-->
+<link href="/unoViewer/css/uno-menu.css" rel="stylesheet" />
+
+<style>
+    /* Container DIV */
+
+    #divUnoViewer {
+        height: 90vh;
+        width: 90vh;
+        display: none;
+        margin-bottom: 10px;
+    }
+
+    #imgWait {
+        height: 25vh;
+        width: 25vw;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .btn:hover {
+        text-decoration: none;
+    }
+
+</style>
+
+<script src="/jquery/jquery.min.js"></script>
+<script src="/unoViewer/js/unoViewer.js"></script>  <!-- THE MAIN JS -->
+<script src="/script/unoviewer.helper.js"></script> <!-- HELPER JS -->
+
+@code {
+
+    [Parameter]
+    public string? FileName { get; set; }
+
+    [Parameter]
+    public string? FilePassword { get; set; }
+
+
+    protected string? viewerSettings;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // GET THE REQUIRED VIEWER SETTINGS JSON FROM THE SERVICE
+
+        viewerSettings = await Task.Run(() => _viewerService.GetViewerSettings());
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var dotNetObjectRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("viewJsInterop.setDotNetHelper", dotNetObjectRef);
+
+            await JS.InvokeVoidAsync("InitViewer", viewerSettings);
+            await JS.InvokeVoidAsync("AttachEvents");
+            await JS.InvokeVoidAsync("SetViewerHeight");
+
+            // OPTIONAL CALL TO OPEN A FILE INITIALLY, IF PROVIDED IN THE CONTROL DECLARATION
+
+            if (!string.IsNullOrEmpty(FileName))
+            {
+                await JS.InvokeVoidAsync("ShowWait");
+
+                var openResult = OpenFile(FileName, FilePassword);
+
+                if (openResult.Success)
+                {
+                    await JS.InvokeVoidAsync("OpenToken", openResult.Message);
+                }
+                else
+                {
+                    throw new Exception(openResult.Message);
+                }
+            }
+        }
+    }
+
+    // THIS IS THE METHOD THAT IS CALLED FROM CLIENT SIDE, FROM THE MENU
+
+    [JSInvokable]
+    public FileOpenResult OpenFile(string fileName, string? password = "")
+    {
+        JS.InvokeVoidAsync("CloseFile");
+
+        return _viewerService.OpenFile(fileName, password);
+    }
+
+}

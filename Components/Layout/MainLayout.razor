@@ -1,0 +1,36 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div id="navMenu" class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a class="btn btn-primary" href="https://docs.unoviewer.com" target="_blank" title="UnoViewer Documentation">Documentation</a>
+            <a class="btn btn-dark" href="https://github.com/unoviewer/UnoViewer-Blazor" target="_blank" title="Github Repository">GitHub</a>
+            <a class="btn btn-success" href="https://unoviewer.com/account/download" target="_blank" title="Download UnoViewer Libray">Free Download</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+
+
+        <footer class="footer mt-auto p-3 bg-light">
+            <div class="container text-center">
+                <span class="text-muted">© 2025 - <a href="https://unoviewer.com" target="_blank" title="Visit UnoViewer.com">UnoViewer.com</a></span>
+            </div>
+        </footer>
+
+    </main>
+
+
+
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
