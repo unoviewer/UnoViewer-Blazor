@@ -179,14 +179,14 @@ function SetViewerHeight() {
 
         var h = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
 
-        var reduceH = 140;
+        var reduceH = 90;
         var windowW = parseInt(window.innerWidth);
         var navW = parseInt($("#navMenu").width());
 
         var w = windowW - navW;
 
         if (w <= windowW / 2) {
-            reduceH = reduceH + 60;
+            reduceH = reduceH + 50;
             w = windowW;
 
             if (null != objUno) {
@@ -194,7 +194,6 @@ function SetViewerHeight() {
             }
         }
         else {
-            reduceH = 140;
 
             if (null != objUno) {
                 objUno.ShowThumbnails(true);
