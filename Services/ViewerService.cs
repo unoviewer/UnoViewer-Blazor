@@ -57,7 +57,7 @@ public class ViewerService
 
     public FileOpenResult OpenFile(string fileName, string? password = "")
     {
-        var pathToFile = Path.Combine(Path.Combine(_hostingEnvironment.WebRootPath, @"files\"), fileName);
+        var pathToFile = Path.Combine(Path.Combine(_hostingEnvironment.WebRootPath, @"files"), fileName);
 
         if (!File.Exists(pathToFile))
         {
